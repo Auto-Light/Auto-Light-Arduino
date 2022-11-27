@@ -7,7 +7,7 @@
      Description: Use Arduino to Receive RF Remote signal          
  ------------------------------------------------------------- */
 
- const int dataSize = 500;  //Arduino memory is limited (max=1700)
+ const int dataSize = 700;  //Arduino memory is limited (max=1700)
  byte storedData[dataSize];  //Create an array to store the data
  #define ledPin 13           //Onboard LED = digital pin 13
  #define rfReceivePin A0     //RF Receiver data pin = Analog pin 0
@@ -71,9 +71,11 @@
   Serial.print(signalDuration);
   Serial.println(" microseconds");
   Serial.println("=====================");
+  Serial.println("CLEARDATA");
   Serial.println("LOW,HIGH");
   delay(20);
   for(int i=0; i<dataSize; i=i+2){
+    Serial.print("DATA,");
     Serial.print(storedData[i]);
     Serial.print(",");
     Serial.println(storedData[i+1]);
