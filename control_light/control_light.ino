@@ -17,12 +17,13 @@ int lightValue = 25;
 void lightDown() {
   // 조명 밝기가 25% 이하일 때는 더이상 밝기 Down 불가능
   if (lightValue <= 25) {
-    bluetooth.write("25");
+    bluetooth.println(25);
     return;
   }
 
   Serial.println("Down");
   remote.setBrightness(--lightValue);
+  bluetooth.println(lightValue);
   delay(50);
   return;
 }
@@ -31,12 +32,13 @@ void lightDown() {
 void lightUp() {
   // 조명 밝기가 100% 이상일 때는 더이상 밝기 Up 불가능
   if (lightValue >= 100) {
-    bluetooth.write("100");
+    bluetooth.println(100);
     return;
   }
 
   Serial.println("Up");
   remote.setBrightness(++lightValue);
+  bluetooth.println(lightValue);
   delay(50);
   return;
 }
