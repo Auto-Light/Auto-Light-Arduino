@@ -11,44 +11,10 @@ SoftwareSerial bluetooth(pinTx, pinRx); // 블루투스 송수신 핀 설정
 GodoxRemote remote(pinRF);              // RF 송신 핀 설정
 
 // 초기 조명 밝기
-int lightValue = 65;
+long lightValue = 65;
 
 // 블루투스 수신 데이터
 String rxDataString = "";
-
-
-// 조명 밝기 Down 함수
-void lightDown() {
-  // 조명 밝기가 25% 이하일 때는 더이상 밝기 Down 불가능
-  if (lightValue <= 25) {
-    bluetooth_write(25);
-    return;
-  }
-
-  remote.setBrightness(--lightValue);
-  bluetooth_write(lightValue);
-  return;
-}
-
-// 조명 밝기 Up 함수
-void lightUp() {
-  // 조명 밝기가 100% 이상일 때는 더이상 밝기 Up 불가능
-  if (lightValue >= 100) {
-    bluetooth_write(100);
-    return;
-  }
-
-  remote.setBrightness(++lightValue);
-  bluetooth_write(lightValue);
-  return;
-}
-
-// 블루투스 전송 함수
-void bluetooth_write(int p_lightValue) {
-  String txDataString = String(p_lightValue);
-  txDataString += '\r';
-  bluetooth.println(txDataString);
-}
 
 
 void setup() {
@@ -71,35 +37,17 @@ void loop() {
   while (bluetooth.available()) {
     char rxData = char(bluetooth.read());  // 블루투스 데이터 수신
 
-    // 블루투스 수신 종료 코드
+    // 조명 밝기값 수신 완료
     if (rxData == 'c') {
+      lightValue = rxDataString.toInt();
+      remote.setBrightness(lightValue);
+
       rxDataString = "";
+      delay(10);
       continue;
     }
 
     rxDataString += rxData;
-
-    // 65를 수신하면 조명 밝기 65%로 초기화
-    if (rxDataString == "65") {
-      lightValue = 65;
-      remote.setBrightness(lightValue);
-      Serial.println(lightValue);
-      delay(10);
-      continue;
-    }
-    // 0을 수신하면 밝기 1% Down
-    if (rxDataString == "0") {
-      lightDown();
-      Serial.println(lightValue);
-      delay(10);
-      continue;
-    }
-    // 1을 수신하면 밝기 1% Up
-    if (rxDataString == "1") { 
-      lightUp();
-      Serial.println(lightValue);
-      delay(10);
-      continue;
-    }
+    delay(10);
   }
 }
